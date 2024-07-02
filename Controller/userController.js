@@ -1,10 +1,8 @@
 const User = require('../Model/userModel');
-const queueService = require('../Services/queueService');
-const logger = require('../Config/logger');
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-
-// Signup a new user
+const jwt = require('jsonwebtoken');
+const queue = require('../Config/queue'); 
+const logger = require('../Config/logger');
 
 const signup = async (req, res) => {
     const { username, password } = req.body;
@@ -16,14 +14,17 @@ const signup = async (req, res) => {
             return res.status(400).json({ message: 'User already exists' });
         }
 
-        // Hash the password
-        const hashedPassword = await bcrypt.hash(password, 10); // 10 is the salt rounds
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Create new user with hashed password
+        // Create new user
         const newUser = new User({ username, password: hashedPassword });
         await newUser.save();
 
         logger.info(`User '${username}' signed up successfully`);
+
+        // Enqueue job
+        queue.create('user_signup', { userId: newUser._id }).save();
 
         res.status(201).json({ message: 'User created successfully' });
     } catch (err) {
@@ -32,6 +33,7 @@ const signup = async (req, res) => {
     }
 };
 
+// Login user
 const login = async (req, res) => {
     const { username, password } = req.body;
 
@@ -53,6 +55,9 @@ const login = async (req, res) => {
 
         logger.info(`User '${username}' logged in successfully`);
 
+        // Enqueue job
+        queue.create('user_login', { userId: user._id }).save();
+
         res.status(200).json({ token });
     } catch (err) {
         logger.error(`Error logging in user: ${err.message}`);
@@ -60,38 +65,4 @@ const login = async (req, res) => {
     }
 };
 
-// Process requests from user's queue
-const processRequests = async (req, res) => {
-    try {
-        const userId = req.user._id;
-
-        // Enqueue request (assuming queueService handles this asynchronously)
-        queueService.enqueue(userId, (enqueueError) => {
-            if (enqueueError) {
-                logger.error(`Error enqueuing request: ${enqueueError.message}`);
-                return res.status(500).json({ error: 'Error enqueueing request' });
-            }
-
-            // Dequeue request
-            queueService.dequeue(userId, (dequeueError, request) => {
-                if (dequeueError) {
-                    logger.error(`Error dequeuing request: ${dequeueError.message}`);
-                    return res.status(500).json({ error: 'Error dequeuing request' });
-                }
-
-                if (request) {
-                    // Simulating request processing (Replace with actual processing logic)
-                    logger.info(`Processing request: ${JSON.stringify(request)}`);
-                    res.status(200).json({ message: 'Request processed successfully', request });
-                } else {
-                    res.status(404).json({ message: 'No more requests in queue' });
-                }
-            });
-        });
-    } catch (err) {
-        logger.error(`Error processing request: ${err.message}`);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-};
-
-module.exports = { signup, login, processRequests };
+module.exports = { signup, login };
