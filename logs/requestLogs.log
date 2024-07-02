@@ -1,0 +1,6 @@
+{"level":"info","message":"User 'sanjay' signed up successfully"}
+{"level":"info","message":"Processing user signup job for user ID: 66840ee62ed847d5edf0d2fb"}
+{"level":"info","message":"User signup job completed for user ID: 66840ee62ed847d5edf0d2fb"}
+{"level":"info","message":"User 'sonya' logged in successfully"}
+{"level":"info","message":"Processing user login job for user ID: 6683c17c8b44de8cfec3c023"}
+{"level":"info","message":"User login job completed for user ID: 6683c17c8b44de8cfec3c023"}
