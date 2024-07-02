@@ -1,0 +1,17 @@
+{"level":"error","message":"Error signing up user: User validation failed: username: Path `username` is required., password: Path `password` is required."}
+{"level":"error","message":"Error signing up user: User validation failed: username: Path `username` is required., password: Path `password` is required."}
+{"level":"info","message":"User 'gavaskar' signed up successfully"}
+{"level":"info","message":"User 'sonya' signed up successfully"}
+{"level":"info","message":"User 'sonya' logged in successfully"}
+{"level":"error","message":"Error verifying token: invalid token"}
+{"level":"error","message":"Error verifying token: invalid token"}
+{"level":"error","message":"Error verifying token: invalid token"}
+{"level":"error","message":"Error processing request: redisClient.pop is not a function"}
+{"level":"error","message":"Error processing request: redisClient.pop is not a function"}
+{"level":"info","message":"User 'sonya' logged in successfully"}
+{"level":"error","message":"Error processing request: redisClient.pop is not a function"}
+{"level":"error","message":"Error processing request: redisClient.pop is not a function"}
+{"level":"error","message":"Error processing request: redisClient.pop is not a function"}
+{"level":"error","message":"Error processing request: redisClient.rpop is not a function"}
+{"level":"error","message":"Error processing request: redisClient.rpush is not a function"}
+{"level":"error","message":"Error processing request: redisClient.rpush is not a function"}

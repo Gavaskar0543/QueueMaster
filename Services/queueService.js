@@ -1,20 +1,34 @@
 const redisClient = require('../Config/redis');
+const logger = require('../Config/logger');
 
-module.exports = {
+const QueueService = {
     enqueue: (userId, request) => {
-        redisClient.push(userId, JSON.stringify(request), (err, reply) => {
+        redisClient.rpush(`queue:${userId}`, JSON.stringify(request), (err, reply) => {
             if (err) {
-                console.error('Error enqueuing request:', err);
+                logger.error(`Error enqueuing request: ${err.message}`);
+            } else {
+                logger.info(`Request enqueued successfully for user ${userId}`);
             }
         });
     },
+
     dequeue: (userId, callback) => {
-        redisClient.pop(userId, (err, reply) => {
+        redisClient.lpop(`queue:${userId}`, (err, reply) => {
             if (err) {
-                console.error('Error dequeuing request:', err);
+                logger.error(`Error dequeuing request: ${err.message}`);
+                callback(null);
             } else {
-                callback(JSON.parse(reply));
+                if (reply) {
+                    const request = JSON.parse(reply);
+                    logger.info(`Request dequeued successfully for user ${userId}`);
+                    callback(request);
+                } else {
+                    logger.info(`No more requests in queue for user ${userId}`);
+                    callback(null);
+                }
             }
         });
     }
 };
+
+module.exports = QueueService;

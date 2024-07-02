@@ -7,6 +7,7 @@ const cors = require('cors');
 const app = express();
 
 //middleware
+app.use(express.urlencoded({extended:true}))
 app.use(express.json());
 //router middleware
 app.use('/api/users', userRoutes);
